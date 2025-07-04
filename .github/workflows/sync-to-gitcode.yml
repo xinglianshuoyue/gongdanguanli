@@ -1,0 +1,23 @@
+name: Sync to GitCode
+
+on:
+  push:
+    branches: [ main ]  # 如果你主分支是 master，就写 master
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Push to GitCode
+        env:
+          TOKEN: ${{ secrets.GITCODE_TOKEN }}
+        run: |
+          git config --global user.name "xinglianshuoyue"
+          git config --global user.email "your@email.com"
+          git clone https://github.com/xinglianshuoyue/gongdanguanli.git repo
+          cd repo
+          git remote add gitcode https://oauth2:${TOKEN}@gitcode.com/2403_88937882/GDGL12121.git
+          git push gitcode main --force
