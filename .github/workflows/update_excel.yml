@@ -1,0 +1,49 @@
+name: Update Excel Data
+
+on:
+  workflow_dispatch:
+    inputs:
+      column_a:
+        description: 'Col A'
+        required: true
+      column_b:
+        description: 'Col B'
+        required: true
+      column_c:
+        description: 'Col C'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  update-xlsx:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install openpyxl
+
+      - name: Run Python script
+        run: |
+          python scripts/update_xlsx.py "${{ inputs.column_a }}" "${{ inputs.column_b }}" "${{ inputs.column_c }}"
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data.xlsx
+          # 只有文件变动了才提交，防止报错
+          if [[ -n $(git status -s) ]]; then
+            git commit -m "Auto-update: ${{ inputs.column_a }} ${{ inputs.column_b }} ${{ inputs.column_c }}"
+            git push
+          else
+            echo "No changes to commit"
+          fi
