@@ -4,17 +4,19 @@ on:
   workflow_dispatch:
     inputs:
       column_a:
-        description: 'Col A'
+        description: 'POS名称'
         required: true
       column_b:
-        description: 'Col B'
-        required: true
+        description: '设备地址'
+        required: false
       column_c:
-        description: 'Col C'
-        required: true
-
-permissions:
-  contents: write
+        description: '二维码'
+        required: false
+      # ！！！必须加上下面这段，否则 GitHub 会拒绝 Worker 的请求 ！！！
+      action_type:
+        description: '操作类型 (add/update/delete)'
+        required: false
+        default: 'add'
 
 jobs:
   update-xlsx:
